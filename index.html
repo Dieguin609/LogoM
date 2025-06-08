@@ -1,97 +1,55 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Logo + HUD do Servidor</title>
-<style>
-    body {
-        background-color: transparent;
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        color: white;
-    }
-    .logo-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 10px;
-    }
-    .logo {
-        width: 400px;
-        height: auto;
-    }
-    #hud-top {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        display: flex;
-        gap: 10px;
-        z-index: 9999;
-    }
-    #hud-bottom {
-        position: absolute;
-        top: 70px;
-        right: 20px;
-        z-index: 9999;
-    }
-    .hud-box {
-        background: rgba(128, 0, 128, 0.4);
-        padding: 8px 12px;
-        border-radius: 8px;
-        border: 1px solid rgba(128, 0, 128, 0.8);
-        transition: all 0.3s ease;
-        font-size: 14px;
-    }
-    .hud-box:hover {
-        background: rgba(128, 0, 200, 0.6);
-        transform: scale(1.03);
-        box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
-    }
-</style>
+    <meta charset="UTF-8" />
+    <title>Game HUD</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .hud-item {
+            margin-bottom: 10px;
+            font-size: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-<div class="logo-container">
-    <img src="SUA_LOGO_AQUI" alt="Logo do Servidor" class="logo" />
-</div>
-<div id="hud-top">
-    <div class="hud-box">📍 <span id="location">Los Santos</span></div>
-    <div class="hud-box">🕒 <span id="time">07:40</span></div>
-    <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
-</div>
-<div id="hud-bottom">
-    <div class="hud-box">🎥 R$ <span id="money">0,00</span></div>
-</div>
+    <div id="hud">
+        <div class="hud-item" id="hud-money">$0</div>
+        <div class="hud-item" id="hud-location">Location: Unknown</div>
+        <div class="hud-item" id="hud-time">Time: --:--</div>
+    </div>
 
-<script>
-// A função que seu plugin chama ao receber SendClientMessage
-window.cef = {
-    onClientMessage: function(message) {
-        // A mensagem chega no formato "key:value"
-        let parts = message.split(':');
-        if (parts.length !== 2) return;
-        let key = parts[0];
-        let value = parts[1];
-
-        switch(key) {
-            case 'location':
-                document.getElementById('location').innerText = value;
-                break;
-            case 'time':
-                document.getElementById('time').innerText = value;
-                break;
-            case 'money':
-                // Formata valor para moeda brasileira
-                let num = parseFloat(value.replace(/\./g, '').replace(',', '.'));
-                if (!isNaN(num)) {
-                    document.getElementById('money').innerText = num.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-                }
-                break;
-            default:
-                break;
+    <script>
+        // Simulador para hora do cliente (você atualiza isso com um timer)
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('hud-time').innerText = 'Time: ' + timeStr;
         }
-    }
-};
-</script>
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Eventos vindos do Pawn
+        cef.on('game:hud:updateMoney', (money) => {
+            document.getElementById('hud-money').innerText = `$${money}`;
+        });
+
+        cef.on('game:hud:updateLocation', (location) => {
+            document.getElementById('hud-location').innerText = `Location: ${location}`;
+        });
+    </script>
 </body>
 </html>

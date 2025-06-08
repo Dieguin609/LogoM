@@ -1,114 +1,97 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Logo + HUD do Servidor</title>
-    <style>
-        body {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
-
-        .logo-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        .logo {
-            width: 400px;
-            height: auto;
-        }
-
-        #hud-top {
-            position: absolute;
-            top: 20px;
-            right: 20px; /* alinhado à direita */
-            display: flex;
-            gap: 10px;
-            z-index: 9999;
-        }
-
-        #hud-bottom {
-            position: absolute;
-            top: 70px; /* alinhado para parecer com sua imagem */
-            right: 20px; /* alinhado à direita */
-            z-index: 9999;
-        }
-
-        .hud-box {
-            background: rgba(128, 0, 128, 0.4); /* Roxo transparente */
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(128, 0, 128, 0.8); /* Borda roxa */
-            transition: all 0.3s ease;
-            font-size: 14px;
-            user-select: none;
-        }
-
-        .hud-box:hover {
-            background: rgba(128, 0, 200, 0.6);
-            transform: scale(1.03);
-            box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Logo + HUD do Servidor</title>
+<style>
+    body {
+        background-color: transparent;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        color: white;
+    }
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    .logo {
+        width: 400px;
+        height: auto;
+    }
+    #hud-top {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+        z-index: 9999;
+    }
+    #hud-bottom {
+        position: absolute;
+        top: 70px;
+        right: 20px;
+        z-index: 9999;
+    }
+    .hud-box {
+        background: rgba(128, 0, 128, 0.4);
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(128, 0, 128, 0.8);
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+    .hud-box:hover {
+        background: rgba(128, 0, 200, 0.6);
+        transform: scale(1.03);
+        box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
+    }
+</style>
 </head>
 <body>
-    <!-- LOGO CENTRALIZADA -->
-    <div class="logo-container">
-        <img src="SUA LOGO AQUI" alt="Logo do Servidor" class="logo" />
-    </div>
+<div class="logo-container">
+    <img src="SUA_LOGO_AQUI" alt="Logo do Servidor" class="logo" />
+</div>
+<div id="hud-top">
+    <div class="hud-box">📍 <span id="location">Los Santos</span></div>
+    <div class="hud-box">🕒 <span id="time">07:40</span></div>
+    <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
+</div>
+<div id="hud-bottom">
+    <div class="hud-box">🎥 R$ <span id="money">0,00</span></div>
+</div>
 
-    <!-- HUD TOPO (EM LINHA) -->
-    <div id="hud-top">
-        <div class="hud-box">📍 <span id="location">Los Santos</span></div>
-        <div class="hud-box">🕒 <span id="time">--:--</span></div>
-        <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
-    </div>
+<script>
+// A função que seu plugin chama ao receber SendClientMessage
+window.cef = {
+    onClientMessage: function(message) {
+        // A mensagem chega no formato "key:value"
+        let parts = message.split(':');
+        if (parts.length !== 2) return;
+        let key = parts[0];
+        let value = parts[1];
 
-    <!-- HUD DINHEIRO ABAIXO -->
-    <div id="hud-bottom">
-        <div class="hud-box">🎥 R$ <span id="money">0,00</span></div>
-    </div>
-
-    <script>
-        // Desativa componente default do game via CEF (se estiver usando o cef.emit)
-        if(typeof cef !== "undefined" && cef.emit){
-            cef.emit("game:hud:setComponentVisible", "interface", false);
+        switch(key) {
+            case 'location':
+                document.getElementById('location').innerText = value;
+                break;
+            case 'time':
+                document.getElementById('time').innerText = value;
+                break;
+            case 'money':
+                // Formata valor para moeda brasileira
+                let num = parseFloat(value.replace(/\./g, '').replace(',', '.'));
+                if (!isNaN(num)) {
+                    document.getElementById('money').innerText = num.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                }
+                break;
+            default:
+                break;
         }
-
-        // Atualiza a hora real do relógio local, ajustando para o fuso de Brasília (UTC-3)
-        function updateTimeBR() {
-            const now = new Date();
-            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const brt = new Date(utc - (3 * 3600000)); // Brasília UTC-3
-
-            let h = brt.getHours();
-            let m = brt.getMinutes();
-
-            h = h < 10 ? '0' + h : h;
-            m = m < 10 ? '0' + m : m;
-
-            document.getElementById('time').textContent = `${h}:${m}`;
-        }
-
-        // Função para atualizar outros campos do HUD (você chama de Pawn via cef.emit para mudar)
-        function updateHud(location, voice, money) {
-            if(location) document.getElementById('location').innerText = location;
-            if(voice) document.getElementById('voice').innerText = voice;
-            if(money !== undefined) document.getElementById('money').innerText = money.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-        }
-
-        // Atualiza a hora toda vez que carregar e a cada minuto
-        updateTimeBR();
-        setInterval(updateTimeBR, 60000);
-
-        // TESTE: você pode descomentar para testar atualização do HUD direto aqui
-        // updateHud('Vinewood', 'Alto', 12345.67);
-    </script>
+    }
+};
+</script>
 </body>
 </html>

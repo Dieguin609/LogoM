@@ -7,29 +7,36 @@
     <style>
         body {
             background-color: transparent;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
             margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
             color: white;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
         }
 
         .logo {
             width: 400px;
             height: auto;
-            margin-top: 10px;
         }
 
-        #hud {
+        #hud-top {
             position: absolute;
-            top: 150px; /* abaixo da logo */
+            top: 20px;
             left: 20px;
             display: flex;
-            flex-direction: column;
-            font-size: 14px;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        #hud-bottom {
+            position: absolute;
+            top: 70px; /* ajustado para alinhar igual sua imagem */
+            left: 20px;
             z-index: 9999;
         }
 
@@ -38,8 +45,8 @@
             padding: 8px 12px;
             border-radius: 8px;
             border: 1px solid rgba(128, 0, 128, 0.8); /* Borda roxa */
-            margin-bottom: 8px;
             transition: all 0.3s ease;
+            font-size: 14px;
         }
 
         .hud-box:hover {
@@ -51,27 +58,33 @@
 </head>
 <body>
     <!-- LOGO CENTRALIZADA -->
-    <img src="SUA LOGO AQUI" alt="Logo do Servidor" class="logo">
+    <div class="logo-container">
+        <img src="SUA LOGO AQUI" alt="Logo do Servidor" class="logo">
+    </div>
 
-    <!-- HUD NO LADO ESQUERDO -->
-    <div id="hud">
+    <!-- HUD TOPO (EM LINHA) -->
+    <div id="hud-top">
         <div class="hud-box">📍 <span id="location">Los Santos</span></div>
         <div class="hud-box">🕒 <span id="time">07:40</span></div>
         <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
+    </div>
+
+    <!-- HUD DINHEIRO ABAIXO -->
+    <div id="hud-bottom">
         <div class="hud-box">🎥 R$ <span id="money">0,00</span></div>
     </div>
 
     <script>
         cef.emit("game:hud:setComponentVisible", "interface", false);
 
-        // Função para atualizar o HUD (chamável pelo seu filterscript)
+        // Função para atualizar o HUD
         function updateHud(location, time, money) {
             document.getElementById('location').innerText = location;
             document.getElementById('time').innerText = time;
             document.getElementById('money').innerText = money.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
         }
 
-        // Exemplo de chamada (pode remover em produção)
+        // Exemplo (pode remover em produção)
         // updateHud('Los Santos', '12:34', 1234567);
     </script>
 </body>

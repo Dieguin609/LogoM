@@ -1,55 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <title>Game HUD</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo + HUD do Servidor</title>
     <style>
         body {
+            background-color: transparent;
             margin: 0;
             padding: 0;
-            overflow: hidden;
             font-family: Arial, sans-serif;
             color: white;
         }
-        #hud {
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .logo {
+            width: 400px;
+            height: auto;
+        }
+
+        #hud-top {
             position: absolute;
             top: 20px;
             left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 9999;
         }
-        .hud-item {
-            margin-bottom: 10px;
-            font-size: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 5px 10px;
-            border-radius: 5px;
+
+        #hud-bottom {
+            position: absolute;
+            top: 70px; /* ajustado para alinhar igual sua imagem */
+            left: 20px;
+            z-index: 9999;
+        }
+
+        .hud-box {
+            background: rgba(128, 0, 128, 0.4); /* Roxo transparente */
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(128, 0, 128, 0.8); /* Borda roxa */
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .hud-box:hover {
+            background: rgba(128, 0, 200, 0.6);
+            transform: scale(1.03);
+            box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
         }
     </style>
 </head>
 <body>
-    <div id="hud">
-        <div class="hud-item" id="hud-money">$0</div>
-        <div class="hud-item" id="hud-location">Location: Unknown</div>
-        <div class="hud-item" id="hud-time">Time: --:--</div>
+    <!-- LOGO CENTRALIZADA -->
+    <div class="logo-container">
+        <img src="SUA LOGO AQUI" alt="Logo do Servidor" class="logo">
+    </div>
+
+    <!-- HUD TOPO (EM LINHA) -->
+    <div id="hud-top">
+        <div class="hud-box">📍 <span id="location">Los Santos</span></div>
+        <div class="hud-box">🕒 <span id="time">--:--</span></div>
+        <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
+    </div>
+
+    <!-- HUD DINHEIRO ABAIXO -->
+    <div id="hud-bottom">
+        <div class="hud-box">🎥 R$ <span id="money">0,00</span></div>
     </div>
 
     <script>
-        // Simulador para hora do cliente (você atualiza isso com um timer)
+        // Oculta a interface padrão do jogo
+        cef.emit("game:hud:setComponentVisible", "interface", false);
+
+        // Atualiza o horário local do player
         function updateTime() {
             const now = new Date();
-            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('hud-time').innerText = 'Time: ' + timeStr;
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('time').innerText = `${hours}:${minutes}`;
         }
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Eventos vindos do Pawn
-        cef.on('game:hud:updateMoney', (money) => {
-            document.getElementById('hud-money').innerText = `$${money}`;
+        // Recebe a atualização de dinheiro do servidor
+        cef.on("game:hud:updateMoney", (money) => {
+            document.getElementById('money').innerText = money.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
         });
 
-        cef.on('game:hud:updateLocation', (location) => {
-            document.getElementById('hud-location').innerText = `Location: ${location}`;
+        // Recebe a atualização de localização do servidor
+        cef.on("game:hud:updateLocation", (location) => {
+            document.getElementById('location').innerText = location;
         });
+
+        // (Opcional) Caso você decida mandar VOICE pelo GM depois:
+        /*
+        cef.on("game:hud:updateVoice", (voiceStatus) => {
+            document.getElementById('voice').innerText = voiceStatus;
+        });
+        */
     </script>
 </body>
 </html>

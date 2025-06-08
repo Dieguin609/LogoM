@@ -1,68 +1,62 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Logo + HUD do Servidor</title>
-    <style>
-        body {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
-
-        .logo-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        .logo {
-            width: 400px;
-            height: auto;
-        }
-
-        #hud-top {
-            position: absolute;
-            top: 20px;
-            right: 20px; /* alterado de left para right */
-            display: flex;
-            gap: 10px;
-            z-index: 9999;
-        }
-
-        #hud-bottom {
-            position: absolute;
-            top: 70px; /* ajustado para alinhar igual sua imagem */
-            right: 20px; /* alterado de left para right */
-            z-index: 9999;
-        }
-
-        .hud-box {
-            background: rgba(128, 0, 128, 0.4); /* Roxo transparente */
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(128, 0, 128, 0.8); /* Borda roxa */
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-
-        .hud-box:hover {
-            background: rgba(128, 0, 200, 0.6);
-            transform: scale(1.03);
-            box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Logo + HUD do Servidor</title>
+<style>
+    body {
+        background-color: transparent;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        color: white;
+    }
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    .logo {
+        width: 400px;
+        height: auto;
+    }
+    #hud-top {
+        position: absolute;
+        top: 20px;
+        right: 20px; /* Colocado à direita */
+        display: flex;
+        gap: 10px;
+        z-index: 9999;
+    }
+    #hud-bottom {
+        position: absolute;
+        top: 70px;
+        right: 20px; /* Colocado à direita */
+        z-index: 9999;
+    }
+    .hud-box {
+        background: rgba(128, 0, 128, 0.4);
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(128, 0, 128, 0.8);
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+    .hud-box:hover {
+        background: rgba(128, 0, 200, 0.6);
+        transform: scale(1.03);
+        box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
+    }
+</style>
 </head>
 <body>
     <!-- LOGO CENTRALIZADA -->
     <div class="logo-container">
-        <img src="SUA LOGO AQUI" alt="Logo do Servidor" class="logo" />
+        <img src="SUA_LOGO_AQUI.png" alt="Logo do Servidor" class="logo" />
     </div>
 
-    <!-- HUD TOPO (EM LINHA) -->
+    <!-- HUD TOPO -->
     <div id="hud-top">
         <div class="hud-box">📍 <span id="location">Los Santos</span></div>
         <div class="hud-box">🕒 <span id="time">07:40</span></div>
@@ -75,17 +69,15 @@
     </div>
 
     <script>
-        cef.emit("game:hud:setComponentVisible", "interface", false);
-
-        // Função para atualizar o HUD
-        function updateHud(location, time, money) {
+        // Escuta eventos do Pawn via CEF
+        cef.on("game:hud:updateHud", (location, time, money) => {
             document.getElementById('location').innerText = location;
             document.getElementById('time').innerText = time;
-            document.getElementById('money').innerText = money.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-        }
+            document.getElementById('money').innerText = money;
+        });
 
-        // Exemplo (pode remover em produção)
-        // updateHud('Los Santos', '12:34', 1234567);
+        // Esconde HUD padrão do jogo, se quiser
+        cef.emit("game:hud:setComponentVisible", "interface", false);
     </script>
 </body>
 </html>

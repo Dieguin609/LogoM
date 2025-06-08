@@ -1,39 +1,62 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>HUD</title>
-<script src="cef.js"></script> <!-- Biblioteca cef do seu plugin -->
-<script>
-function updateHud(time, money) {
-    document.getElementById("hora").innerText = time;
-    document.getElementById("dinheiro").innerText = money;
-}
-
-// Quando o CEF dispara um evento, ele chama essa função
-cef.on('hud:update', function(jsCode) {
-    eval(jsCode); // executa o JS enviado pelo PAWN
-});
-
-// Pede atualização a cada 1 segundo
-setInterval(function() {
-    cef.emit('hud:requestUpdate', '');
-}, 1000);
-</script>
-<style>
-#hud {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-</style>
+    <style>
+        #hud {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            background: rgba(0,0,0,0.6);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
-<body style="background: transparent;">
-<div id="hud">
-    <div>Hora: <span id="hora">--:--:--</span></div>
-    <div>Dinheiro: <span id="dinheiro">$0</span></div>
-</div>
+<body>
+    <div id="hud">
+        <div>Hora (Brasília): <span id="time">00:00:00</span></div>
+        <div>Dinheiro: $<span id="money">0</span></div>
+    </div>
+
+    <script>
+        // Função para atualizar o relógio a cada segundo
+        function updateTime() {
+            // Pega a data local do navegador
+            let now = new Date();
+
+            // Converte para horário de Brasília (GMT-3)
+            // Pegamos o tempo UTC e subtraímos 3 horas
+            let utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            let brasiliaTime = new Date(utc - (3 * 3600000));
+
+            let h = brasiliaTime.getHours().toString().padStart(2, '0');
+            let m = brasiliaTime.getMinutes().toString().padStart(2, '0');
+            let s = brasiliaTime.getSeconds().toString().padStart(2, '0');
+
+            document.getElementById('time').textContent = `${h}:${m}:${s}`;
+        }
+
+        // Atualiza o tempo a cada 1 segundo
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Escuta mensagens do Pawn via CEF
+        window.cefQuery = window.cefQuery || function(obj) {
+            // fallback para testes fora do SAMP
+            if(obj.onSuccess) obj.onSuccess('');
+        };
+
+        // Aqui a função que seu Pawn chama para enviar dados
+        window.hudUpdate = function(money) {
+            document.getElementById('money').textContent = money;
+        };
+
+        // Exemplo de como o Pawn pode chamar: hudUpdate("1500");
+
+        // Se o plugin CEF envia eventos, adapte para receber os eventos e chamar hudUpdate
+    </script>
 </body>
 </html>

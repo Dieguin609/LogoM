@@ -1,65 +1,39 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>HUD Servidor</title>
-    <style>
-        body {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
+<meta charset="UTF-8">
+<title>HUD</title>
+<script src="cef.js"></script> <!-- Biblioteca cef do seu plugin -->
+<script>
+function updateHud(time, money) {
+    document.getElementById("hora").innerText = time;
+    document.getElementById("dinheiro").innerText = money;
+}
 
-        #hud-top {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 9999;
-        }
+// Quando o CEF dispara um evento, ele chama essa função
+cef.on('hud:update', function(jsCode) {
+    eval(jsCode); // executa o JS enviado pelo PAWN
+});
 
-        #hud-bottom {
-            position: absolute;
-            top: 70px;
-            right: 20px;
-            z-index: 9999;
-        }
-
-        .hud-box {
-            background: rgba(128, 0, 128, 0.4);
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(128, 0, 128, 0.8);
-            font-size: 14px;
-        }
-    </style>
+// Pede atualização a cada 1 segundo
+setInterval(function() {
+    cef.emit('hud:requestUpdate', '');
+}, 1000);
+</script>
+<style>
+#hud {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+</style>
 </head>
-<body>
-    <div id="hud-top">
-        <div class="hud-box">📍 <span id="location">Los Santos</span></div>
-        <div class="hud-box">🕒 <span id="time">00:00</span></div>
-        <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
-    </div>
-
-    <div id="hud-bottom">
-        <div class="hud-box">🎥 R$ <span id="money">0,00</span></div>
-    </div>
-
-    <script>
-        // Mock cef.on para ambiente real
-        if (typeof cef === 'undefined') cef = { on: (name, callback) => {
-            window.addEventListener(name, (event) => callback(...event.detail));
-        } };
-
-        cef.on('game:hud:updateHud', (location, time, money) => {
-            document.getElementById('location').innerText = location;
-            document.getElementById('time').innerText = time;
-            document.getElementById('money').innerText = money;
-        });
-    </script>
+<body style="background: transparent;">
+<div id="hud">
+    <div>Hora: <span id="hora">--:--:--</span></div>
+    <div>Dinheiro: <span id="dinheiro">$0</span></div>
+</div>
 </body>
 </html>

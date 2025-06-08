@@ -28,4 +28,29 @@
         cef.emit("game:hud:setComponentVisible", "interface", false);
         
     </script>
+    <div id="hud" style="position: absolute; top: 20px; left: 20px; display: flex; gap: 10px; font-family: Arial, sans-serif; font-size: 14px; color: white; z-index: 9999;">
+    <div class="hud-box">📍 <span id="location">Los Santos</span></div>
+    <div class="hud-box">🕒 <span id="time">07:40</span></div>
+    <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
+    <div class="hud-box">🎥 R$ <span id="money">0,00</span></div>
+</div>
+
+<style>
+    .hud-box {
+        background: rgba(0, 0, 0, 0.4);
+        padding: 5px 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+</style>
+
+<script>
+    function updateHud(location, time, money) {
+        document.getElementById('location').innerText = location;
+        document.getElementById('time').innerText = time;
+        document.getElementById('money').innerText = money.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    }
+</script>
+
 </html>
+

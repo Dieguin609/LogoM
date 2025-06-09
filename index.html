@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Logo + HUD do Servidor</title>
     <style>
         body {
@@ -12,40 +12,30 @@
             font-family: Arial, sans-serif;
             color: white;
         }
-
         .logo-container {
             display: flex;
             justify-content: center;
             margin-top: 10px;
         }
-
         .logo {
             width: 400px;
             height: auto;
         }
-
         #hud-top {
             position: absolute;
             top: 20px;
             right: 20px;
             display: flex;
-            flex-direction: row;
             gap: 10px;
             z-index: 9999;
             align-items: center;
-            justify-content: flex-end;
         }
-
         #hud-bottom {
             position: absolute;
             top: 70px;
             right: 20px;
             z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
         }
-
         .hud-box {
             background: rgba(128, 0, 128, 0.4);
             padding: 8px 12px;
@@ -53,10 +43,8 @@
             border: 1px solid rgba(128, 0, 128, 0.8);
             transition: all 0.3s ease;
             font-size: 14px;
-            min-width: 150px;
-            text-align: right;
+            white-space: nowrap;
         }
-
         .hud-box:hover {
             background: rgba(128, 0, 200, 0.6);
             transform: scale(1.03);
@@ -70,7 +58,7 @@
         <img src="SUA LOGO AQUI" alt="Logo do Servidor" class="logo" />
     </div>
 
-    <!-- HUD TOPO -->
+    <!-- HUD TOPO (EM LINHA) -->
     <div id="hud-top">
         <div class="hud-box">📍 <span id="location">Los Santos</span></div>
         <div class="hud-box">🕒 <span id="time">--:--</span></div>
@@ -79,47 +67,48 @@
 
     <!-- HUD DINHEIRO ABAIXO -->
     <div id="hud-bottom">
-        <div class="hud-box">💰 R$ <span id="money">0,00</span></div>
+        <div class="hud-box">🎥 R$ <span id="money">0,00</span></div>
     </div>
 
     <script>
-        // Oculta os componentes padrão do HUD do jogo (se aplicável)
-        cef.emit("game:hud:setComponentVisible", "interface", false);
+        // Esconde a interface nativa do jogo via CEF (se disponível)
+        if (typeof cef !== "undefined" && cef.emit) {
+            cef.emit("game:hud:setComponentVisible", "interface", false);
+        }
 
-        // Atualiza o horário do sistema no HUD (local)
+        // Atualiza o relógio para o horário local a cada segundo
         function updateTime() {
             const now = new Date();
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('time').innerText = `${hours}:${minutes}`;
+            const hours = String(now.getHours()).padStart(2, "0");
+            const minutes = String(now.getMinutes()).padStart(2, "0");
+            document.getElementById("time").innerText = `${hours}:${minutes}`;
         }
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Atualiza o local no HUD
-        function updateLocation(location) {
-            document.getElementById('location').innerText = location;
+        // Função para atualizar o HUD
+        function updateHud(location, money) {
+            if (location) document.getElementById('location').innerText = location;
+
+            if (money !== undefined && money !== null) {
+                const valor = Number(money);
+                if (!isNaN(valor)) {
+                    document.getElementById('money').innerText = valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                }
+            }
         }
 
-        // Atualiza o dinheiro no HUD
-        function updateMoney(money) {
-            // money deve ser number
-            document.getElementById('money').innerText = money.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        // Escuta o evento do Pawn (CEF) com dados do HUD
+        if (typeof cef !== "undefined" && cef.on) {
+            cef.on("hud:update", (data) => {
+                try {
+                    const parsed = JSON.parse(data);
+                    updateHud(parsed.location, parsed.money);
+                } catch(e) {
+                    console.error("Erro ao parsear dados do HUD:", e);
+                }
+            });
         }
-
-        // Recebe eventos do Pawn
-        cef.subscribe("game:hud:updateLocation", (location) => {
-            updateLocation(location);
-        });
-
-        cef.subscribe("game:hud:updateMoney", (money) => {
-            updateMoney(money);
-        });
-
-        // Se quiser também pode adicionar evento para atualizar voz, etc.
-        // cef.subscribe("game:hud:updateVoice", (voice) => {
-        //    document.getElementById('voice').innerText = voice;
-        // });
     </script>
 </body>
 </html>

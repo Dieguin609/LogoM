@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Logo + HUD do Servidor</title>
     <style>
+        /* Remove barra de rolagem */
+        html, body {
+            overflow: hidden;
+        }
+
         body {
             background-color: transparent;
             margin: 0;
@@ -12,6 +17,7 @@
             font-family: Arial, sans-serif;
             color: white;
         }
+
         #hud-top {
             position: absolute;
             top: 20px;
@@ -21,6 +27,7 @@
             z-index: 9999;
             align-items: center;
         }
+
         .hud-box {
             background: rgba(128, 0, 128, 0.4);
             padding: 8px 12px;
@@ -30,73 +37,61 @@
             font-size: 14px;
             white-space: nowrap;
         }
+
         .hud-box:hover {
             background: rgba(128, 0, 200, 0.6);
             transform: scale(1.03);
             box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
         }
 
-        /* HUD lateral (ícones) */
+        /* HUD lateral */
         #hud-side {
             position: absolute;
-            top: 120px; /* abaixo do dinheiro */
-            right: 20px;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
             display: flex;
             flex-direction: column;
-            gap: 10px; /* espaçamento entre os quadrados */
+            gap: 15px;
             z-index: 9999;
-            align-items: flex-end;
         }
 
         .hud-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 100px; /* um pouco maior para caber a PNG de 95px */
+            height: 100px;
+            border-radius: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* depth/sombra */
-            border: 2px solid rgba(255, 255, 255, 0.2); /* borda suave */
-        }
-        .hud-icon:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4); /* brilho no hover */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Cores específicas */
-        .hud-icon.amarelo {
-            background-color: #FFD700; /* amarelo ouro */
-        }
-        .hud-icon.azul {
-            background-color: #00BFFF; /* azul claro */
-        }
-        .hud-icon.laranja {
-            background-color: #964B00; /* Marrom */
-        }
-        .hud-icon.preto {
-            background-color: #000000; /* preto */
-        }
-
-        /* PNGs dentro do quadradinho */
         .hud-icon img {
-            width: 100px; /* um pouco maior que 32px para destacar */
-            height: 100px;
+            width: 95px; /* tamanho solicitado */
+            height: 95px;
             object-fit: contain;
-            filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); /* sombra leve na imagem */
+            pointer-events: none; /* evita interação com mouse */
         }
+
+        /* Cores */
+        .amarelo { background-color: rgba(255, 223, 0, 0.3); }
+        .azul    { background-color: rgba(0, 128, 255, 0.3); }
+        .laranja { background-color: rgba(255, 140, 0, 0.3); }
+        .preto   { background-color: rgba(50, 50, 50, 0.6); }
     </style>
 </head>
 <body>
 
-    <!-- HUD TOPO (EM LINHA) -->
+    <!-- HUD TOPO (em linha) -->
     <div id="hud-top">
         <div class="hud-box">📍 <span id="location">San Andreas</span></div>
         <div class="hud-box">🕒 <span id="time">--:--</span></div>
         <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
     </div>
 
-    <!-- HUD LATERAL (ÍCONES COM PNG) -->
+    <!-- HUD LATERAL (ícones com PNG) -->
     <div id="hud-side">
         <div class="hud-icon amarelo"><img src="hamburger.png" alt="Comida"></div>
         <div class="hud-icon azul"><img src="agua.png" alt="Água"></div>
@@ -120,10 +115,9 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Função para atualizar o HUD (localização e voz)
-        function updateHud(location, voice) {
+        // Função para atualizar o HUD
+        function updateHud(location) {
             if (location) document.getElementById('location').innerText = location;
-            if (voice) document.getElementById('voice').innerText = voice;
         }
 
         // Escuta o evento do Pawn (CEF) com dados do HUD
@@ -131,7 +125,7 @@
             cef.on("hud:update", (data) => {
                 try {
                     const parsed = JSON.parse(data);
-                    updateHud(parsed.location, parsed.voice);
+                    updateHud(parsed.location);
                 } catch(e) {
                     console.error("Erro ao parsear dados do HUD:", e);
                 }

@@ -24,23 +24,21 @@
             height: auto;
         }
 
-        /* HUD TOPO na direita (em linha HORIZONTAL) */
         #hud-top {
             position: absolute;
             top: 20px;
             right: 20px;
             display: flex;
-            flex-direction: row; /* Itens na horizontal */
+            flex-direction: row;
             gap: 10px;
             z-index: 9999;
             align-items: center;
-            justify-content: flex-end; /* Alinha para direita */
+            justify-content: flex-end;
         }
 
-        /* HUD DINHEIRO também na direita, um pouco abaixo */
         #hud-bottom {
             position: absolute;
-            top: 70px; /* Ajustado para ficar abaixo do hud-top */
+            top: 70px;
             right: 20px;
             z-index: 9999;
             display: flex;
@@ -49,13 +47,13 @@
         }
 
         .hud-box {
-            background: rgba(128, 0, 128, 0.4); /* Roxo transparente */
+            background: rgba(128, 0, 128, 0.4);
             padding: 8px 12px;
             border-radius: 8px;
-            border: 1px solid rgba(128, 0, 128, 0.8); /* Borda roxa */
+            border: 1px solid rgba(128, 0, 128, 0.8);
             transition: all 0.3s ease;
             font-size: 14px;
-            min-width: 150px; /* Para o tamanho não variar muito */
+            min-width: 150px;
             text-align: right;
         }
 
@@ -72,42 +70,56 @@
         <img src="SUA LOGO AQUI" alt="Logo do Servidor" class="logo" />
     </div>
 
-    <!-- HUD TOPO (agora lado direito, em linha) -->
+    <!-- HUD TOPO -->
     <div id="hud-top">
         <div class="hud-box">📍 <span id="location">Los Santos</span></div>
         <div class="hud-box">🕒 <span id="time">--:--</span></div>
         <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
     </div>
 
-    <!-- HUD DINHEIRO ABAIXO (lado direito) -->
+    <!-- HUD DINHEIRO ABAIXO -->
     <div id="hud-bottom">
         <div class="hud-box">💰 R$ <span id="money">0,00</span></div>
     </div>
 
     <script>
-        // Esconde componentes padrão (caso use)
+        // Oculta os componentes padrão do HUD do jogo (se aplicável)
         cef.emit("game:hud:setComponentVisible", "interface", false);
 
-        // Função para atualizar o HUD vindo do servidor
-        function updateHud(location, money) {
-            document.getElementById('location').innerText = location;
-            document.getElementById('money').innerText = money.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-        }
-
-        // Função para atualizar a hora real automaticamente
+        // Atualiza o horário do sistema no HUD (local)
         function updateTime() {
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
             document.getElementById('time').innerText = `${hours}:${minutes}`;
         }
-
-        // Atualiza a cada segundo
         setInterval(updateTime, 1000);
-        updateTime(); // Atualiza já ao abrir
+        updateTime();
 
-        // Exemplo de chamada do updateHud (em produção será o cef_emit_event que chama isso)
-        // updateHud('Los Santos', 1234567);
+        // Atualiza o local no HUD
+        function updateLocation(location) {
+            document.getElementById('location').innerText = location;
+        }
+
+        // Atualiza o dinheiro no HUD
+        function updateMoney(money) {
+            // money deve ser number
+            document.getElementById('money').innerText = money.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        }
+
+        // Recebe eventos do Pawn
+        cef.subscribe("game:hud:updateLocation", (location) => {
+            updateLocation(location);
+        });
+
+        cef.subscribe("game:hud:updateMoney", (money) => {
+            updateMoney(money);
+        });
+
+        // Se quiser também pode adicionar evento para atualizar voz, etc.
+        // cef.subscribe("game:hud:updateVoice", (voice) => {
+        //    document.getElementById('voice').innerText = voice;
+        // });
     </script>
 </body>
 </html>

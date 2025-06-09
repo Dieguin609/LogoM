@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Logo + HUD do Servidor</title>
     <style>
         body {
@@ -24,20 +24,27 @@
             height: auto;
         }
 
+        /* HUD TOPO na direita */
         #hud-top {
             position: absolute;
             top: 20px;
-            left: 20px;
+            right: 20px; /* Aqui muda para direita */
             display: flex;
+            flex-direction: column; /* Itens um abaixo do outro */
             gap: 10px;
             z-index: 9999;
+            align-items: flex-end; /* Alinha textos para direita */
         }
 
+        /* HUD DINHEIRO também na direita, um pouco abaixo */
         #hud-bottom {
             position: absolute;
-            top: 70px; /* ajustado para alinhar igual sua imagem */
-            left: 20px;
+            top: 140px; /* Ajuste para ficar um pouco abaixo do hud-top */
+            right: 20px;
             z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
         }
 
         .hud-box {
@@ -47,6 +54,8 @@
             border: 1px solid rgba(128, 0, 128, 0.8); /* Borda roxa */
             transition: all 0.3s ease;
             font-size: 14px;
+            min-width: 150px; /* Para o tamanho não variar muito */
+            text-align: right;
         }
 
         .hud-box:hover {
@@ -59,51 +68,45 @@
 <body>
     <!-- LOGO CENTRALIZADA -->
     <div class="logo-container">
-        <img src="SUA LOGO AQUI" alt="Logo do Servidor" class="logo">
+        <img src="SUA LOGO AQUI" alt="Logo do Servidor" class="logo" />
     </div>
 
-    <!-- HUD TOPO (EM LINHA) -->
+    <!-- HUD TOPO (agora do lado direito) -->
     <div id="hud-top">
         <div class="hud-box">📍 <span id="location">Los Santos</span></div>
         <div class="hud-box">🕒 <span id="time">--:--</span></div>
         <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
     </div>
 
-    <!-- HUD DINHEIRO ABAIXO -->
+    <!-- HUD DINHEIRO ABAIXO (lado direito) -->
     <div id="hud-bottom">
-        <div class="hud-box">🎥 R$ <span id="money">0,00</span></div>
+        <div class="hud-box">💰 R$ <span id="money">0,00</span></div>
     </div>
 
     <script>
-        // Oculta a interface padrão do jogo
+        // Esconde componentes padrão (caso use)
         cef.emit("game:hud:setComponentVisible", "interface", false);
 
-        // Atualiza o horário local do player
+        // Função para atualizar o HUD vindo do servidor
+        function updateHud(location, money) {
+            document.getElementById('location').innerText = location;
+            document.getElementById('money').innerText = money.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        }
+
+        // Função para atualizar a hora real automaticamente
         function updateTime() {
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
             document.getElementById('time').innerText = `${hours}:${minutes}`;
         }
+
+        // Atualiza a cada segundo
         setInterval(updateTime, 1000);
-        updateTime();
+        updateTime(); // Atualiza já ao abrir
 
-        // Recebe a atualização de dinheiro do servidor
-        cef.on("game:hud:updateMoney", (money) => {
-            document.getElementById('money').innerText = money.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-        });
-
-        // Recebe a atualização de localização do servidor
-        cef.on("game:hud:updateLocation", (location) => {
-            document.getElementById('location').innerText = location;
-        });
-
-        // (Opcional) Caso você decida mandar VOICE pelo GM depois:
-        /*
-        cef.on("game:hud:updateVoice", (voiceStatus) => {
-            document.getElementById('voice').innerText = voiceStatus;
-        });
-        */
+        // Exemplo de chamada do updateHud (em produção será o cef_emit_event que chama isso)
+        // updateHud('Los Santos', 1234567);
     </script>
 </body>
 </html>

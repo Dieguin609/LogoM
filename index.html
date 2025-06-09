@@ -51,24 +51,17 @@
             width: 48px;
             height: 48px;
             border-radius: 8px;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
+            background-color: rgba(255, 255, 255, 0.1); /* leve fundo para visualização */
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        .hud-icon.food {
-            background-color: #ffcc33; /* amarelo */
-        }
-        .hud-icon.water {
-            background-color: #33ccff; /* azul */
-        }
-        .hud-icon.energy {
-            background-color: #cc6633; /* marrom/laranja */
-        }
-        .hud-icon.sleep {
-            background-color: #000000; /* preto */
+        .hud-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* garante que a imagem não deforme */
         }
     </style>
 </head>
@@ -81,12 +74,12 @@
         <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
     </div>
 
-    <!-- HUD LATERAL (ÍCONES) -->
+    <!-- HUD LATERAL (ÍCONES COM PNG) -->
     <div id="hud-side">
-        <div class="hud-icon food">🍔</div>
-        <div class="hud-icon water">💧</div>
-        <div class="hud-icon energy">🔥</div>
-        <div class="hud-icon sleep">💤</div>
+        <div class="hud-icon"><img src="hamburger.png" alt="Comida"></div>
+        <div class="hud-icon"><img src="agua.png" alt="Água"></div>
+        <div class="hud-icon"><img src="xixi.png" alt="Energia"></div>
+        <div class="hud-icon"><img src="sono.png" alt="Sono"></div>
     </div>
 
     <script>

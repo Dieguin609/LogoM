@@ -29,6 +29,7 @@
             gap: 10px;
             z-index: 9999;
             align-items: center;
+            flex-wrap: wrap;
         }
         .hud-box {
             background: rgba(128, 0, 128, 0.4);
@@ -44,10 +45,11 @@
             transform: scale(1.03);
             box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
         }
+
+      
     </style>
 </head>
 <body>
- 
 
     <!-- HUD TOPO (EM LINHA) -->
     <div id="hud-top">
@@ -55,6 +57,9 @@
         <div class="hud-box">🕒 <span id="time">--:--</span></div>
         <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
     </div>
+
+    <!-- HUD Dinheiro (Separado) -->
+    <div id="hud-money">R$ <span id="money">0</span></div>
 
     <script>
         // Esconde a interface nativa do jogo via CEF (se disponível)
@@ -72,9 +77,11 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Função para atualizar o HUD
-        function updateHud(location) {
+        // Função para atualizar o HUD (localização e dinheiro)
+        function updateHud(location, money, voice) {
             if (location) document.getElementById('location').innerText = location;
+            if (money !== undefined) document.getElementById('money').innerText = money.toLocaleString('pt-BR');
+            if (voice) document.getElementById('voice').innerText = voice;
         }
 
         // Escuta o evento do Pawn (CEF) com dados do HUD
@@ -82,7 +89,7 @@
             cef.on("hud:update", (data) => {
                 try {
                     const parsed = JSON.parse(data);
-                    updateHud(parsed.location);
+                    updateHud(parsed.location, parsed.money, parsed.voice);
                 } catch(e) {
                     console.error("Erro ao parsear dados do HUD:", e);
                 }

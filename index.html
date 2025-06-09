@@ -39,34 +39,51 @@
         /* HUD lateral (ícones) */
         #hud-side {
             position: absolute;
-            top: 120px; /* ajuste para alinhar abaixo do dinheiro */
+            top: 120px; /* abaixo do dinheiro */
             right: 20px;
             display: flex;
             flex-direction: column;
-            gap: 12px; /* espaçamento entre os quadrados */
+            gap: 10px; /* espaçamento entre os quadrados */
             z-index: 9999;
             align-items: flex-end;
         }
+
         .hud-icon {
-            width: 60px;
-            height: 60px;
+            width: 48px;
+            height: 48px;
             border-radius: 12px;
-            background: rgba(0, 0, 0, 0.4); /* fundo semi-transparente */
-            border: 1px solid rgba(255, 255, 255, 0.3);
             display: flex;
             justify-content: center;
             align-items: center;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* depth/sombra */
+            border: 2px solid rgba(255, 255, 255, 0.2); /* borda suave */
         }
         .hud-icon:hover {
-            background: rgba(255, 255, 255, 0.1);
             transform: scale(1.05);
-            box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4); /* brilho no hover */
         }
+
+        /* Cores específicas */
+        .hud-icon.amarelo {
+            background-color: #FFD700; /* amarelo ouro */
+        }
+        .hud-icon.azul {
+            background-color: #00BFFF; /* azul claro */
+        }
+        .hud-icon.laranja {
+            background-color: #FFA500; /* laranja */
+        }
+        .hud-icon.preto {
+            background-color: #000000; /* preto */
+        }
+
+        /* PNGs dentro do quadradinho */
         .hud-icon img {
-            width: 38px; /* aumenta o tamanho das PNGs */
-            height: 38px;
+            width: 34px; /* um pouco maior que 32px para destacar */
+            height: 34px;
             object-fit: contain;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); /* sombra leve na imagem */
         }
     </style>
 </head>
@@ -81,10 +98,10 @@
 
     <!-- HUD LATERAL (ÍCONES COM PNG) -->
     <div id="hud-side">
-        <div class="hud-icon"><img src="hamburger.png" alt="Comida"></div>
-        <div class="hud-icon"><img src="agua.png" alt="Água"></div>
-        <div class="hud-icon"><img src="xixi.png" alt="Energia"></div>
-        <div class="hud-icon"><img src="sono.png" alt="Sono"></div>
+        <div class="hud-icon amarelo"><img src="hamburger.png" alt="Comida"></div>
+        <div class="hud-icon azul"><img src="agua.png" alt="Água"></div>
+        <div class="hud-icon laranja"><img src="xixi.png" alt="Energia"></div>
+        <div class="hud-icon preto"><img src="sono.png" alt="Sono"></div>
     </div>
 
     <script>

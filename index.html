@@ -47,9 +47,9 @@
         /* HUD lateral direita */
         #hud-side {
             position: absolute;
-            top: 50%;
+            top: 100%;
             right: 20px; /* HUD no lado direito */
-            transform: translateY(-50%);
+            transform: none; /* tira o translateY */
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -65,7 +65,8 @@
             align-items: center;
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-            border: 2px solid #ffffff; /* Borda branca sólida */
+            border: none;
+
         }
 
         .hud-icon img {

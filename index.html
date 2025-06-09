@@ -24,22 +24,23 @@
             height: auto;
         }
 
-        /* HUD TOPO na direita */
+        /* HUD TOPO na direita (em linha HORIZONTAL) */
         #hud-top {
             position: absolute;
             top: 20px;
-            right: 20px; /* Aqui muda para direita */
+            right: 20px;
             display: flex;
-            flex-direction: column; /* Itens um abaixo do outro */
+            flex-direction: row; /* Itens na horizontal */
             gap: 10px;
             z-index: 9999;
-            align-items: flex-end; /* Alinha textos para direita */
+            align-items: center;
+            justify-content: flex-end; /* Alinha para direita */
         }
 
         /* HUD DINHEIRO também na direita, um pouco abaixo */
         #hud-bottom {
             position: absolute;
-            top: 140px; /* Ajuste para ficar um pouco abaixo do hud-top */
+            top: 70px; /* Ajustado para ficar abaixo do hud-top */
             right: 20px;
             z-index: 9999;
             display: flex;
@@ -71,7 +72,7 @@
         <img src="SUA LOGO AQUI" alt="Logo do Servidor" class="logo" />
     </div>
 
-    <!-- HUD TOPO (agora do lado direito) -->
+    <!-- HUD TOPO (agora lado direito, em linha) -->
     <div id="hud-top">
         <div class="hud-box">📍 <span id="location">Los Santos</span></div>
         <div class="hud-box">🕒 <span id="time">--:--</span></div>

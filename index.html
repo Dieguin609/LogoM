@@ -47,30 +47,29 @@
         /* HUD lateral */
         #hud-side {
             position: absolute;
-            top: 50%;
+            top: 45%;
             left: 20px;
-            transform: translateY(-50%);
+            transform: translateY(-45%);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
             z-index: 9999;
         }
 
         .hud-icon {
-            width: 100px; /* um pouco maior para caber a PNG de 95px */
-            height: 100px;
-            border-radius: 16px;
+            width: 70px; /* tamanho do quadradinho */
+            height: 70px;
+            border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .hud-icon img {
-            width: 95px; /* tamanho solicitado */
-            height: 95px;
+            width: 50px; /* PNG proporcional */
+            height: 50px;
             object-fit: contain;
             pointer-events: none; /* evita interação com mouse */
         }
@@ -86,7 +85,7 @@
 
     <!-- HUD TOPO (em linha) -->
     <div id="hud-top">
-        <div class="hud-box">📍 <span id="location">San Andreas</span></div>
+        <div class="hud-box">📍 <span id="location">Los Santos</span></div>
         <div class="hud-box">🕒 <span id="time">--:--</span></div>
         <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
     </div>

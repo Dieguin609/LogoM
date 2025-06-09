@@ -60,14 +60,14 @@
 
     <!-- HUD TOPO (EM LINHA) -->
     <div id="hud-top">
-        <div class="hud-box">📍 <span id="location">Los Santos</span></div>
+        <div class="hud-box">📍 <span id="location">San Andreas</span></div>
         <div class="hud-box">🕒 <span id="time">--:--</span></div>
         <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
     </div>
 
     <!-- HUD DINHEIRO ABAIXO -->
     <div id="hud-bottom">
-        <div class="hud-box">🎥 R$ <span id="money">0,00</span></div>
+        <div class="hud-box">💰 R$ <span id="money">0,00</span></div>
     </div>
 
     <script>
@@ -86,8 +86,8 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Função para atualizar o HUD
-        function updateHud(location, money) {
+        // Função para atualizar o HUD (location + money + voice opcional)
+        function updateHud(location, money, voiceMode) {
             if (location) document.getElementById('location').innerText = location;
 
             if (money !== undefined && money !== null) {
@@ -96,6 +96,10 @@
                     document.getElementById('money').innerText = valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
                 }
             }
+
+            if (voiceMode) {
+                document.getElementById('voice').innerText = voiceMode;
+            }
         }
 
         // Escuta o evento do Pawn (CEF) com dados do HUD
@@ -103,12 +107,15 @@
             cef.on("hud:update", (data) => {
                 try {
                     const parsed = JSON.parse(data);
-                    updateHud(parsed.location, parsed.money);
+                    updateHud(parsed.location, parsed.money, parsed.voice);
                 } catch(e) {
                     console.error("Erro ao parsear dados do HUD:", e);
                 }
             });
         }
+
+        // Função que você pode chamar manualmente no console:
+        // updateHud('San Fierro', 150000, 'Sussurro');
     </script>
 </body>
 </html>

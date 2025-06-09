@@ -12,15 +12,6 @@
             font-family: Arial, sans-serif;
             color: white;
         }
-        .logo-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .logo {
-            width: 400px;
-            height: auto;
-        }
         #hud-top {
             position: absolute;
             top: 20px;
@@ -29,7 +20,6 @@
             gap: 10px;
             z-index: 9999;
             align-items: center;
-            flex-wrap: wrap;
         }
         .hud-box {
             background: rgba(128, 0, 128, 0.4);
@@ -46,7 +36,40 @@
             box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
         }
 
-      
+        /* HUD lateral (ícones) */
+        #hud-side {
+            position: absolute;
+            top: 120px; /* ajuste para alinhar abaixo do dinheiro em TextDraw */
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+            align-items: flex-end;
+        }
+        .hud-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        .hud-icon.food {
+            background-color: #ffcc33; /* amarelo */
+        }
+        .hud-icon.water {
+            background-color: #33ccff; /* azul */
+        }
+        .hud-icon.energy {
+            background-color: #cc6633; /* marrom/laranja */
+        }
+        .hud-icon.sleep {
+            background-color: #000000; /* preto */
+        }
     </style>
 </head>
 <body>
@@ -58,8 +81,13 @@
         <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
     </div>
 
-    <!-- HUD Dinheiro (Separado) -->
-    <div id="hud-money">R$ <span id="money">0</span></div>
+    <!-- HUD LATERAL (ÍCONES) -->
+    <div id="hud-side">
+        <div class="hud-icon food">🍔</div>
+        <div class="hud-icon water">💧</div>
+        <div class="hud-icon energy">🔥</div>
+        <div class="hud-icon sleep">💤</div>
+    </div>
 
     <script>
         // Esconde a interface nativa do jogo via CEF (se disponível)
@@ -77,10 +105,9 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Função para atualizar o HUD (localização e dinheiro)
-        function updateHud(location, money, voice) {
+        // Função para atualizar o HUD (localização e voz)
+        function updateHud(location, voice) {
             if (location) document.getElementById('location').innerText = location;
-            if (money !== undefined) document.getElementById('money').innerText = money.toLocaleString('pt-BR');
             if (voice) document.getElementById('voice').innerText = voice;
         }
 
@@ -89,7 +116,7 @@
             cef.on("hud:update", (data) => {
                 try {
                     const parsed = JSON.parse(data);
-                    updateHud(parsed.location, parsed.money, parsed.voice);
+                    updateHud(parsed.location, parsed.voice);
                 } catch(e) {
                     console.error("Erro ao parsear dados do HUD:", e);
                 }

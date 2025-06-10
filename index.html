@@ -18,6 +18,27 @@
             color: white;
         }
 
+        /* Logo centralizada estilo FIVEM */
+        #logo-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10000; /* Fica por cima do resto */
+            animation: fadeIn 1s ease forwards;
+        }
+
+        #logo-center img {
+            width: 300px; /* Ajuste o tamanho como quiser */
+            height: auto;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* HUD TOPO */
         #hud-top {
             position: absolute;
             top: 20px;
@@ -48,7 +69,7 @@
         #hud-side {
             position: absolute;
             top: 27%;
-            right: 20px; /* HUD no lado direito */
+            right: 20px;
             transform: translateY(-50%);
             display: flex;
             flex-direction: column;
@@ -57,7 +78,7 @@
         }
 
         .hud-icon {
-            width: 50px; /* Ícones pequenos, igual sua print */
+            width: 50px;
             height: 50px;
             border-radius: 8px;
             display: flex;
@@ -66,33 +87,37 @@
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
             border: none;
-
         }
 
         .hud-icon img {
-            width: 94px; /* PNG pequeno e centralizado */
+            width: 94px;
             height: 54px;
             object-fit: contain;
             pointer-events: none;
         }
 
         /* Cores sólidas */
-        .amarelo { background-color: #FFDF00; }  /* Amarelo sólido */
-        .azul    { background-color: #0080FF; }  /* Azul sólido */
-        .laranja { background-color: #964B00; }  /* marrom sólido */
-        .preto   { background-color: #000000; }  /* Preto sólido */
+        .amarelo { background-color: #FFDF00; }
+        .azul    { background-color: #0080FF; }
+        .laranja { background-color: #964B00; }
+        .preto   { background-color: #000000; }
     </style>
 </head>
 <body>
 
-    <!-- HUD TOPO (em linha) -->
+    <!-- LOGO CENTRAL estilo FIVEM -->
+    <div id="logo-center">
+        <img src="logo.png" alt="Logo do Servidor">
+    </div>
+
+    <!-- HUD TOPO -->
     <div id="hud-top">
         <div class="hud-box">📍 <span id="location">Los Santos</span></div>
         <div class="hud-box">🕒 <span id="time">--:--</span></div>
         <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
     </div>
 
-    <!-- HUD LATERAL (ícones com PNG) -->
+    <!-- HUD LATERAL -->
     <div id="hud-side">
         <div class="hud-icon amarelo"><img src="hamburger.png" alt="Comida"></div>
         <div class="hud-icon azul"><img src="agua.png" alt="Água"></div>

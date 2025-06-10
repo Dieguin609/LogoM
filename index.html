@@ -18,19 +18,20 @@
             color: white;
         }
 
-        /* Logo centralizada estilo FIVEM */
+        /* Logo no topo estilo FIVEM HUD */
         #logo-center {
             position: absolute;
-            top: 50%;
+            top: 15%; /* Movida para cima (15% da tela) */
             left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10000; /* Fica por cima do resto */
+            transform: translateX(-50%);
+            z-index: 10000;
             animation: fadeIn 1s ease forwards;
         }
 
         #logo-center img {
-            width: 300px; /* Ajuste o tamanho como quiser */
+            width: 180px; /* Logo menor */
             height: auto;
+            opacity: 0.9;
         }
 
         @keyframes fadeIn {
@@ -105,7 +106,7 @@
 </head>
 <body>
 
-    <!-- LOGO CENTRAL estilo FIVEM -->
+    <!-- LOGO estilo FIVEM HUD -->
     <div id="logo-center">
         <img src="logo.png" alt="Logo do Servidor">
     </div>

@@ -5,12 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Logo + HUD do Servidor</title>
     <style>
-        /* Remove barra de rolagem */
         html, body {
             overflow: hidden;
-        }
-
-        body {
             background-color: transparent;
             margin: 0;
             padding: 0;
@@ -18,10 +14,10 @@
             color: white;
         }
 
-        /* Logo no topo estilo FIVEM HUD */
+        /* Logo topo estilo FIVEM */
         #logo-center {
             position: absolute;
-            top: -4%; /* Movida para cima (15% da tela) */
+            top: -4%;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10000;
@@ -29,7 +25,7 @@
         }
 
         #logo-center img {
-            width: 180px; /* Logo menor */
+            width: 180px;
             height: auto;
             opacity: 0.9;
         }
@@ -39,7 +35,6 @@
             100% { opacity: 1; }
         }
 
-        /* HUD TOPO */
         #hud-top {
             position: absolute;
             top: 20px;
@@ -66,7 +61,6 @@
             box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
         }
 
-        /* HUD lateral direita */
         #hud-side {
             position: absolute;
             top: 27%;
@@ -97,16 +91,25 @@
             pointer-events: none;
         }
 
-        /* Cores sólidas */
         .amarelo { background-color: #FFDF00; }
         .azul    { background-color: #0080FF; }
         .laranja { background-color: #964B00; }
         .preto   { background-color: #000000; }
+
+        /* VELOCÍMETRO */
+        #speedometer {
+            display: none;
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
 
-    <!-- LOGO estilo FIVEM HUD -->
+    <!-- Logo -->
     <div id="logo-center">
         <img src="logo.png" alt="Logo do Servidor">
     </div>
@@ -126,13 +129,23 @@
         <div class="hud-icon preto"><img src="sono.png" alt="Sono"></div>
     </div>
 
+    <!-- VELOCÍMETRO -->
+    <div id="speedometer">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="65" stroke="#ffa500" stroke-width="6" fill="none"
+                    stroke-dasharray="408" stroke-dashoffset="0" id="healthArc"/>
+            <circle cx="75" cy="75" r="60" stroke="#ffffff22" stroke-width="2" fill="none"/>
+            <line id="needle" x1="75" y1="75" x2="75" y2="20" stroke="white" stroke-width="4"
+                  stroke-linecap="round" transform="rotate(0 75 75)" />
+            <text x="75" y="90" text-anchor="middle" font-size="18" fill="white" id="speedText">0 KM/H</text>
+        </svg>
+    </div>
+
     <script>
-        // Esconde a interface nativa do jogo via CEF (se disponível)
         if (typeof cef !== "undefined" && cef.emit) {
             cef.emit("game:hud:setComponentVisible", "interface", false);
         }
 
-        // Atualiza o relógio para o horário local a cada segundo
         function updateTime() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, "0");
@@ -142,20 +155,49 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Função para atualizar o HUD
         function updateHud(location) {
             if (location) document.getElementById('location').innerText = location;
         }
 
-        // Escuta o evento do Pawn (CEF) com dados do HUD
+        // Velocímetro
+        const speedo = document.getElementById("speedometer");
+        const speedText = document.getElementById("speedText");
+        const needle = document.getElementById("needle");
+        const healthArc = document.getElementById("healthArc");
+
+        function updateSpeedDisplay(spd) {
+            const speed = Math.max(0, Math.min(spd, 200));
+            const angle = (speed / 200) * 180 - 90;
+            needle.setAttribute("transform", `rotate(${angle} 75 75)`);
+            speedText.textContent = `${Math.round(speed)} KM/H`;
+        }
+
+        function updateHealthDisplay(hp) {
+            const vida = Math.max(0, Math.min(hp, 1000));
+            const offset = 408 - (408 * vida / 1000);
+            healthArc.setAttribute("stroke-dashoffset", offset);
+        }
+
         if (typeof cef !== "undefined" && cef.on) {
             cef.on("hud:update", (data) => {
                 try {
                     const parsed = JSON.parse(data);
                     updateHud(parsed.location);
-                } catch(e) {
-                    console.error("Erro ao parsear dados do HUD:", e);
+                } catch (e) {
+                    console.error("Erro ao parsear HUD:", e);
                 }
+            });
+
+            cef.on("hud:showSpeedo", (state) => {
+                speedo.style.display = (state === true || state === "true") ? "block" : "none";
+            });
+
+            cef.on("hud:updateSpeed", (spd) => {
+                updateSpeedDisplay(parseFloat(spd));
+            });
+
+            cef.on("hud:updateHealth", (hp) => {
+                updateHealthDisplay(parseFloat(hp));
             });
         }
     </script>

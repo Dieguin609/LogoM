@@ -1,205 +1,167 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Logo + HUD do Servidor</title>
-    <style>
-        html, body {
-            overflow: hidden;
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HUD com Velocímetro</title>
+  <style>
+    html, body {
+      overflow: hidden;
+      background-color: transparent;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
 
-        /* Logo topo estilo FIVEM */
-        #logo-center {
-            position: absolute;
-            top: -4%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10000;
-            animation: fadeIn 1s ease forwards;
-        }
+    #logo-center {
+      position: absolute;
+      top: -4%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      animation: fadeIn 1s ease forwards;
+    }
 
-        #logo-center img {
-            width: 180px;
-            height: auto;
-            opacity: 0.9;
-        }
+    #logo-center img {
+      width: 180px;
+      opacity: 0.9;
+    }
 
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
 
-        #hud-top {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 9999;
-            align-items: center;
-        }
+    #hud-top {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 9999;
+      align-items: center;
+    }
 
-        .hud-box {
-            background: rgba(128, 0, 128, 0.4);
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(128, 0, 128, 0.8);
-            transition: all 0.3s ease;
-            font-size: 14px;
-            white-space: nowrap;
-        }
+    .hud-box {
+      background: rgba(128, 0, 128, 0.4);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(128, 0, 128, 0.8);
+      font-size: 14px;
+    }
 
-        .hud-box:hover {
-            background: rgba(128, 0, 200, 0.6);
-            transform: scale(1.03);
-            box-shadow: 0 0 8px rgba(128, 0, 200, 0.8);
-        }
+    #hud-side {
+      position: absolute;
+      top: 27%;
+      right: 20px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 9999;
+    }
 
-        #hud-side {
-            position: absolute;
-            top: 27%;
-            right: 20px;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 9999;
-        }
+    .hud-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: none;
+    }
 
-        .hud-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-            border: none;
-        }
+    .hud-icon img {
+      width: 94px;
+      height: 54px;
+      object-fit: contain;
+      pointer-events: none;
+    }
 
-        .hud-icon img {
-            width: 94px;
-            height: 54px;
-            object-fit: contain;
-            pointer-events: none;
-        }
+    .amarelo { background-color: #FFDF00; }
+    .azul    { background-color: #0080FF; }
+    .laranja { background-color: #964B00; }
+    .preto   { background-color: #000000; }
 
-        .amarelo { background-color: #FFDF00; }
-        .azul    { background-color: #0080FF; }
-        .laranja { background-color: #964B00; }
-        .preto   { background-color: #000000; }
-
-        /* VELOCÍMETRO */
-        #speedometer {
-            display: none;
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-        }
-    </style>
+    /* Velocímetro */
+    #velocimetro {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Logo -->
-    <div id="logo-center">
-        <img src="logo.png" alt="Logo do Servidor">
-    </div>
+  <div id="logo-center">
+    <img src="logo.png" alt="Logo do Servidor">
+  </div>
 
-    <!-- HUD TOPO -->
-    <div id="hud-top">
-        <div class="hud-box">📍 <span id="location">Los Santos</span></div>
-        <div class="hud-box">🕒 <span id="time">--:--</span></div>
-        <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
-    </div>
+  <div id="hud-top">
+    <div class="hud-box">📍 <span id="location">Los Santos</span></div>
+    <div class="hud-box">🕒 <span id="time">--:--</span></div>
+    <div class="hud-box">🎙️ <span id="voice">Normal</span></div>
+  </div>
 
-    <!-- HUD LATERAL -->
-    <div id="hud-side">
-        <div class="hud-icon amarelo"><img src="hamburger.png" alt="Comida"></div>
-        <div class="hud-icon azul"><img src="agua.png" alt="Água"></div>
-        <div class="hud-icon laranja"><img src="xixi.png" alt="Energia"></div>
-        <div class="hud-icon preto"><img src="sono.png" alt="Sono"></div>
-    </div>
+  <div id="hud-side">
+    <div class="hud-icon amarelo"><img src="hamburger.png" alt="Comida"></div>
+    <div class="hud-icon azul"><img src="agua.png" alt="Água"></div>
+    <div class="hud-icon laranja"><img src="xixi.png" alt="Energia"></div>
+    <div class="hud-icon preto"><img src="sono.png" alt="Sono"></div>
+  </div>
 
-    <!-- VELOCÍMETRO -->
-    <div id="speedometer">
-        <svg width="150" height="150" viewBox="0 0 150 150">
-            <circle cx="75" cy="75" r="65" stroke="#ffa500" stroke-width="6" fill="none"
-                    stroke-dasharray="408" stroke-dashoffset="0" id="healthArc"/>
-            <circle cx="75" cy="75" r="60" stroke="#ffffff22" stroke-width="2" fill="none"/>
-            <line id="needle" x1="75" y1="75" x2="75" y2="20" stroke="white" stroke-width="4"
-                  stroke-linecap="round" transform="rotate(0 75 75)" />
-            <text x="75" y="90" text-anchor="middle" font-size="18" fill="white" id="speedText">0 KM/H</text>
-        </svg>
-    </div>
+  <div id="velocimetro">0 km/h</div>
 
-    <script>
-        if (typeof cef !== "undefined" && cef.emit) {
-            cef.emit("game:hud:setComponentVisible", "interface", false);
+  <script>
+    if (typeof cef !== "undefined" && cef.emit) {
+      cef.emit("game:hud:setComponentVisible", "interface", false);
+    }
+
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      document.getElementById("time").innerText = `${hours}:${minutes}`;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    function updateHud(location) {
+      if (location) document.getElementById('location').innerText = location;
+    }
+
+    // Atualização da HUD padrão
+    if (typeof cef !== "undefined" && cef.on) {
+      cef.on("hud:update", (data) => {
+        try {
+          const parsed = JSON.parse(data);
+          updateHud(parsed.location);
+        } catch (e) {
+          console.error("Erro ao parsear dados do HUD:", e);
         }
+      });
 
-        function updateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, "0");
-            const minutes = String(now.getMinutes()).padStart(2, "0");
-            document.getElementById("time").innerText = `${hours}:${minutes}`;
+      // Velocímetro
+      cef.on("hud:velocimetro", (data) => {
+        const parsed = JSON.parse(data);
+        const velElem = document.getElementById("velocimetro");
+        if (parsed.mostrar === true) {
+          velElem.style.display = "block";
+          velElem.innerText = `${Math.round(parsed.velocidade)} km/h`;
+        } else {
+          velElem.style.display = "none";
         }
-        setInterval(updateTime, 1000);
-        updateTime();
-
-        function updateHud(location) {
-            if (location) document.getElementById('location').innerText = location;
-        }
-
-        // Velocímetro
-        const speedo = document.getElementById("speedometer");
-        const speedText = document.getElementById("speedText");
-        const needle = document.getElementById("needle");
-        const healthArc = document.getElementById("healthArc");
-
-        function updateSpeedDisplay(spd) {
-            const speed = Math.max(0, Math.min(spd, 200));
-            const angle = (speed / 200) * 180 - 90;
-            needle.setAttribute("transform", `rotate(${angle} 75 75)`);
-            speedText.textContent = `${Math.round(speed)} KM/H`;
-        }
-
-        function updateHealthDisplay(hp) {
-            const vida = Math.max(0, Math.min(hp, 1000));
-            const offset = 408 - (408 * vida / 1000);
-            healthArc.setAttribute("stroke-dashoffset", offset);
-        }
-
-        if (typeof cef !== "undefined" && cef.on) {
-            cef.on("hud:update", (data) => {
-                try {
-                    const parsed = JSON.parse(data);
-                    updateHud(parsed.location);
-                } catch (e) {
-                    console.error("Erro ao parsear HUD:", e);
-                }
-            });
-
-            cef.on("hud:showSpeedo", (state) => {
-                speedo.style.display = (state === true || state === "true") ? "block" : "none";
-            });
-
-            cef.on("hud:updateSpeed", (spd) => {
-                updateSpeedDisplay(parseFloat(spd));
-            });
-
-            cef.on("hud:updateHealth", (hp) => {
-                updateHealthDisplay(parseFloat(hp));
-            });
-        }
-    </script>
+      });
+    }
+  </script>
 </body>
 </html>
